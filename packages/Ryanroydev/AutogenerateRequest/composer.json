@@ -1,0 +1,13 @@
+{
+    "name": "Ryanroydev/LaravelSendgrid",
+    "description": "A package for integrating SendGrid with Laravel",
+    "require": {
+        "php": "^7.3|^8.0",
+        "sendgrid/sendgrid": "^7.9"
+    },
+    "autoload": {
+        "psr-4": {
+            "Ryanroydev\\LaravelSendgrid\\": "src/"
+        }
+    }
+}
