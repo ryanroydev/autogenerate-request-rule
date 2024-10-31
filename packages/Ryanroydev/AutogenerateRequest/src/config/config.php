@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'sendgrid_api' => 'value',
+    'route' => 'test',
 ];

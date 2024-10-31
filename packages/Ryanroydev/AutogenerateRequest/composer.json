@@ -1,13 +1,17 @@
 {
-    "name": "Ryanroydev/LaravelSendgrid",
-    "description": "A package for integrating SendGrid with Laravel",
-    "require": {
-        "php": "^7.3|^8.0",
-        "sendgrid/sendgrid": "^7.9"
-    },
+    "name": "Ryanroydev/AutogenerateRequestRule",
+    "description": "A custom Laravel package",
+    "type": "library",
     "autoload": {
         "psr-4": {
-            "Ryanroydev\\LaravelSendgrid\\": "src/"
+            "Ryanroydev\\AutogenerateRequestRule\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Ryanroydev\\AutogenerateRequestRule\\AutogenerateRequestRuleServiceProvider"
+            ]
         }
     }
 }
