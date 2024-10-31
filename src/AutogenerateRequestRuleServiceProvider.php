@@ -1,6 +1,6 @@
 <?php
 
-namespace Ryanroydev\AutogenerateRequestRule\Commands;
+namespace Ryanroydev\AutogenerateRequestRule;
 
 use Illuminate\Support\ServiceProvider;
 
@@ -17,7 +17,7 @@ class AutogenerateRequestRuleServiceProvider extends ServiceProvider
     {
         // Register any package services
         $this->commands([
-            AutogenerateRequestRule::class,
+            Commands\AutogenerateRequestRule::class,
         ]);
     }
 }
