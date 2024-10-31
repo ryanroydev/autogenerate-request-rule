@@ -13,5 +13,6 @@
                 "Ryanroydev\\AutogenerateRequestRule\\AutogenerateRequestRuleServiceProvider"
             ]
         }
-    }
+    },
+     "license": "MIT"
 }
