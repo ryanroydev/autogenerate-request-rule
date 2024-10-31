@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands;
+namespace Ryanroydev\AutogenerateRequestRule\Commands;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\View;
 use Illuminate\Console\Command;

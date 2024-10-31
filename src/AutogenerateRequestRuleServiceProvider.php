@@ -1,6 +1,6 @@
 <?php
 
-namespace Ryanroydev\AutogenerateRequestRule;
+namespace Ryanroydev\AutogenerateRequestRule\Commands;
 
 use Illuminate\Support\ServiceProvider;
 
@@ -9,7 +9,7 @@ class AutogenerateRequestRuleServiceProvider extends ServiceProvider
     public function boot()
     {
         // Load routes, views, migrations, etc.
-        $this->mergeConfigFrom(__DIR__.'/config/config.php', 'AutogenerateRequestRule');
+        //$this->mergeConfigFrom(__DIR__.'/config/config.php', 'AutogenerateRequestRule');
      
     }
 
@@ -17,7 +17,7 @@ class AutogenerateRequestRuleServiceProvider extends ServiceProvider
     {
         // Register any package services
         $this->commands([
-            Commands\AutogenerateRequestRule::class,
+            AutogenerateRequestRule::class,
         ]);
     }
 }
