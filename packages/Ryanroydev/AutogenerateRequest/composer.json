@@ -1,5 +1,5 @@
 {
-    "name": "Ryanroydev/AutogenerateRequestRule",
+    "name": "ryanroydev/autogenerate-request-rule",
     "description": "A custom Laravel package",
     "type": "library",
     "autoload": {
