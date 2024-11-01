@@ -144,7 +144,10 @@ class RequestRulesService
                 break;  
             case 'date':
                  $result  =  'required|date';
-                break;    
+                break;
+            case 'email':
+                $result  =  'required|email';
+                break;  
         }
         return  $result;
     }
