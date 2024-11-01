@@ -32,11 +32,13 @@ You can use the following Artisan command to generate request validation rules f
 php artisan ryanroydev:autogenerate-request-rule ControllerClass
 
 ```
-## OUTPUT 
-![Example Image](https://ryanroydev.github.io/autogenerate-request-rule/input.PNG)
-
 
 Replace ControllerClass with the name of your controller.
+
+## Input and Output 
+![Input Image](https://ryanroydev.github.io/autogenerate-request-rule/input.PNG)
+
+![Output Image](https://ryanroydev.github.io/autogenerate-request-rule/output.PNG)
 
 ## Required Inputs in Form View
 
