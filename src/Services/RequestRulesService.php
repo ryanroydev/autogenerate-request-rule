@@ -78,7 +78,10 @@ class RequestRulesService
 
         // Check if the Blade file exists
         if (!file_exists($bladePath)) {
-            return "Blade view not found: {$bladePath}";
+            return [
+                'error' => true,
+                'message' => "Blade view not found at: {$bladePath}",
+            ];
         }
         $bladeContent = file_get_contents($bladePath);
         // Use regex to find input elements and extract their type and name attributes
