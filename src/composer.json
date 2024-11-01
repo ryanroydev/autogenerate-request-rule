@@ -2,6 +2,7 @@
     "name": "ryanroydev/autogenerate-request-rule",
     "description": "A custom Laravel package",
     "type": "library",
+    "version": "1.0.0",
     "autoload": {
         "psr-4": {
             "Ryanroydev\\AutogenerateRequestRule\\": "src/"
@@ -15,6 +16,6 @@
         }
     },
     "license": "MIT",
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "prefer-stable": true
 }

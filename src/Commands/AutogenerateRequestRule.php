@@ -37,11 +37,13 @@ class AutogenerateRequestRule extends Command
         foreach ($viewNames as $action => $viewName) {
             $bladeInputs = $this->requestRuleService->getBladeInputs($viewName);
 
+            if ($this->hasError($bladeInputs)) {
+                $this->error($bladeInputs['message']);
+                continue;
+            }
+
             foreach ($bladeInputs as $bladeInput) {
-                if ($this->hasError($bladeInput)) {
-                    $this->error($bladeInput['message']);
-                    continue;
-                }
+               
 
                 $actionName = $this->sanitizeActionName($bladeInput['action'] ?? $action);
                 $customRequestName = $this->generateRequestName($controller, $actionName);
@@ -92,7 +94,7 @@ class AutogenerateRequestRule extends Command
 
     private function hasError(array $response): bool
     {
-        return !empty($response['error']);
+        return !empty($response['error']) && $response['error'] === true;
     }
 
     private function removeSpecialCharacters(string $string): string
