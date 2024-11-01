@@ -8,9 +8,8 @@ A custom Laravel package that automatically generates request validation rules f
 ## Table of Contents
 
 - [Installation](#installation)
+- [Available Commands](#available-commands)
 - [Usage](#usage)
-- [Configuration](#configuration)
-- [Contributing](#contributing)
 - [License](#license)
 
 ## Installation
