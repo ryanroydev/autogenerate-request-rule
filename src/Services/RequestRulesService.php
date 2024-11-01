@@ -80,16 +80,17 @@ class RequestRulesService
         if (!file_exists($bladePath)) {
             return "Blade view not found: {$bladePath}";
         }
-
         $bladeContent = file_get_contents($bladePath);
         // Use regex to find input elements and extract their type and name attributes
-        preg_match_all('/<input[^>]+type=["\']?([^"\'>]+)["\']?[^>]+name=["\']?([^"\'>]+)["\']?/', $bladeContent, $matches);
+        preg_match_all('/<input[^>]*(?:name=["\']?([^"\'>]+)["\']?[^>]*type=["\']?([^"\'>]+)["\']?|type=["\']?([^"\'>]+)["\']?[^>]*name=["\']?([^"\'>]+)["\']?)[^>]*\/?>/i', $bladeContent, $matches);
 
         // Combine the type and name into strings
         $inputDetails = [];
-        foreach ($matches[1] as $index => $type) {
-            $name = $matches[2][$index];
-            $inputDetails[$name] = $type;
+        foreach ($matches[1] as $index => $name) {
+            if($name != ''){
+                $type = $matches[2][$index];
+                $inputDetails[$name] = $type;
+            }
         }
         // Get the content of the Blade file
         return $inputDetails;
@@ -140,6 +141,9 @@ class RequestRulesService
                 break;
             case 'number':
                  $result  =  'required|integer';
+                break;  
+            case 'date':
+                 $result  =  'required|date';
                 break;    
         }
         return  $result;

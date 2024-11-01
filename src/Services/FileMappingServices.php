@@ -5,7 +5,7 @@ namespace Ryanroydev\AutogenerateRequestRule\Services;
 class FileMappingServices
 {
 
-    public function mapMethod(String $requestContent, String $newRules)  : String
+    public function mapContentRules(String $requestContent, String $newRules)  : String
     {
 
         foreach(['public function rules(): array','public function rules()'] as $mapText)

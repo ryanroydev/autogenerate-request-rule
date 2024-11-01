@@ -32,6 +32,9 @@ Replace ControllerClass with the name of your controller.
 
 ## Usage
 
+Once you have generated the request rules, you can use them in your controllers to validate incoming requests. Here's an example of how to apply the generated rules:
+
+
 ```php
 use App\Http\Requests\YourGeneratedRequest;
 
@@ -41,8 +44,6 @@ public function store(YourGeneratedRequest $request)
     // Your logic here
 }
 ```
-
-Once you have generated the request rules, you can use them in your controllers to validate incoming requests. Here's an example of how to apply the generated rules:
 
 ## License
 

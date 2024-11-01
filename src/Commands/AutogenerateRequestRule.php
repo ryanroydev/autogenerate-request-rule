@@ -52,6 +52,8 @@ class AutogenerateRequestRule extends Command
 
         foreach ($viewnames as $action => $viewname) {
             $bladeInputs = $this->request_rule_service->getBladeInputs($viewname);
+
+           
             $CustomRequestName = str_replace('Controller', '', $controller) . ucfirst($action) . 'Request';
             $outputs[] = $this->request_rule_service->generateCustomRequest($CustomRequestName);
             $requestFilePath = app_path("Http/Requests/{$CustomRequestName}.php");
@@ -67,7 +69,7 @@ class AutogenerateRequestRule extends Command
             $rulesBladeInputs = $this->request_rule_service->generateRulesCode($bladeInputs);
 
             // Find the location of the rules() method
-            $requestContent = $this->map_service->mapMethod($requestContent, $rulesBladeInputs);
+            $requestContent = $this->map_service->mapContentRules($requestContent, $rulesBladeInputs);
 
           
             // Save the modified content back to the file
