@@ -4,7 +4,9 @@ namespace Ryanroydev\AutogenerateRequestRule\Commands;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\View;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Artisan;
+
+
+use Ryanroydev\AutogenerateRequestRule\Services\RequestRulesService;
 class AutogenerateRequestRule extends Command
 {
     /**
@@ -24,31 +26,54 @@ class AutogenerateRequestRule extends Command
     /**
      * Execute the console command.
      */
+
+    private RequestRulesService $request_rule_service;
+
+    // Constructor with dependency injection
+    public function __construct(RequestRulesService $service)
+    {
+        parent::__construct(); // Call parent constructor
+   
+        // Store the injected service
+        $this->request_rule_service = $service;
+   
+          
+    }
+
     public function handle()
     {
+        $output = "";
         $controller = $this->argument('Controller');
+        $controllerPath = $this->request_rule_service->getControllerPath($controller);
 
-        $controllerPath = app_path('Http/Controllers/'.$controller.".php");
-
-        $codeString = file_get_contents($controllerPath);
-
-        // Split the string into an array of lines
-        $lines = explode("\n", $codeString);
-
-        // Filter lines containing 'return view'
-        $viewLines = array_filter($lines, function($line) {
-            return strpos($line, 'return view') !== false;
-        });
-
-        foreach( $viewLines as  $view){
-             $path = resource_path('views/product/index.blade.php');
-             $content = File::get($path);
-            //$html = View::make('product.index')->render();
+        //Validate if the controller file exists
+        if (!class_exists($controllerPath)) {
+            return $this->error("Controller Class does not exist at: $controllerPath");
         }
+
+        $viewnames = $this->request_rule_service->getViewReturningMethods($controllerPath);
+       
+
+        foreach($viewnames as $action => $viewname){
+            $bladeInputs = $this->request_rule_service->getBladeInputs($viewname);
+            $CustomRequestName = str_replace('Controller','',$controller).ucfirst($action).'Request';
+            $output = $this->request_rule_service->generateCustomRequest($CustomRequestName);
+           
+
+        }
+
+        // foreach( $viewLines as  $view){
+        //      $path = resource_path('views/product/index.blade.php');
+        //      $content = File::get($path);
+        //      echo $content;exit;
+        //     //$html = View::make('product.index')->render();
+        // }
+
+        // foreach($methods as  $method){
+        //     $method->invoke();
+        // }
+        
       
-        echo $content;exit;
-        Artisan::call('make:request CustomRequest');
-        $output = Artisan::output();
         $this->info($output);
     }
 }
