@@ -152,4 +152,21 @@ class RequestRulesService
         return  $result;
     }
 
+
+    public function getUniqueRequestName(string $baseRequestName): string
+    {
+        $requestFilePath = app_path("Http/Requests/{$baseRequestName}.php");
+        $counter = 1;
+
+        // Check if the request file exists and increment the counter if it does
+        while (file_exists($requestFilePath)) {
+            // Create a new request name with incremented counter
+            $newRequestName = str_replace('Request', "Request{$counter}", $baseRequestName);
+            $requestFilePath = app_path("Http/Requests/{$newRequestName}.php");
+            $counter++;
+        }
+
+        // Return the unique request name
+        return $newRequestName ?? $baseRequestName; // Fallback to base name if no incrementing is needed
+    }
 }

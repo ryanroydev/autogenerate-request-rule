@@ -55,6 +55,7 @@ class AutogenerateRequestRule extends Command
 
            
             $CustomRequestName = str_replace('Controller', '', $controller) . ucfirst($action) . 'Request';
+            $CustomRequestName = $this->request_rule_service->getUniqueRequestName($CustomRequestName);
             $outputs[] = $this->request_rule_service->generateCustomRequest($CustomRequestName);
             $requestFilePath = app_path("Http/Requests/{$CustomRequestName}.php");
 
