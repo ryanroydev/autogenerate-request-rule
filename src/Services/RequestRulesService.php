@@ -23,7 +23,12 @@ class RequestRulesService
         return $controllerPath;
     }
 
-
+     /**
+     * getViewReturningMethods.
+     *
+     * @param string $controllerPath controller name class.
+     * @return array $viewReturningMethods Tget all method in class.
+     */
     public function getViewReturningMethods(String $controllerPath) : Array
     {
         
@@ -100,6 +105,44 @@ class RequestRulesService
         
         Artisan::call('make:request '.$requestClass);
         return Artisan::output();
+    }
+
+     /**
+     * generateRulesCode.
+     *
+     * @param Array $rulesArray The rules Array fields.
+     * @return String  $resultCode The result code.
+     */
+    public function generateRulesCode(Array $rulesArray) : String
+    {
+        $rulesCode = "\n        return [\n";
+        foreach ($rulesArray as $field => $type) {
+
+            $validation = $this->getRulesByType($type);
+            $rulesCode .= "            '$field' => '$validation',\n";
+        }
+        $rulesCode .= "        ];\n";
+        return $rulesCode;
+    }
+
+     /**
+     * getRulesByType.
+     *
+     * @param Array $type The type of field.
+     * @return String  $result The result.
+     */
+    protected function getRulesByType(String $type) : String
+    {
+        $result = 'required';
+        switch ($type) {
+            case 'text':
+                $result  =  'required|string|max:255';
+                break;
+            case 'number':
+                 $result  =  'required|integer';
+                break;    
+        }
+        return  $result;
     }
 
 }
