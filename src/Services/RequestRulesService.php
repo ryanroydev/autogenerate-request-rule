@@ -184,7 +184,12 @@ class RequestRulesService
         return  $result;
     }
 
-
+     /**
+     * Get Unique Request Name.
+     *
+     * @param string $baseRequestName Current Name.
+     * @return String  $newRequestName The New Name if exist base name.
+     */
     public function getUniqueRequestName(string $baseRequestName): string
     {
         $requestFilePath = app_path("Http/Requests/{$baseRequestName}.php");

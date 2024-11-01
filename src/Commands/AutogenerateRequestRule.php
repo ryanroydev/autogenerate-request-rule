@@ -6,35 +6,20 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Console\Command;
 use Ryanroydev\AutogenerateRequestRule\Services\RequestRulesService;
 use Ryanroydev\AutogenerateRequestRule\Services\FileMappingServices;
+
 class AutogenerateRequestRule extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
     protected $signature = 'ryanroydev:autogenerate-request-rule {Controller}';
+    protected $description = 'Generates a custom form request class for a specified controller with automatic validation rules.';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
-    protected $description = 'This command generates a custom form request class for a specified controller. The generated request will automatically include validation rules based on the fields provided in the form input.';
-
-    /**
-     * Execute the console command.
-     */
     private RequestRulesService $requestRuleService;
     private FileMappingServices $mapService;
 
-    // Constructor with dependency injection
-    public function __construct(RequestRulesService $service, FileMappingServices $mapservice)
+    public function __construct(RequestRulesService $service, FileMappingServices $mapService)
     {
-        parent::__construct(); // Call parent constructor
-        // Store the injected service
+        parent::__construct();
         $this->requestRuleService = $service;
-        $this->mapService = $mapservice;
+        $this->mapService = $mapService;
     }
 
     public function handle()
@@ -42,29 +27,24 @@ class AutogenerateRequestRule extends Command
         $controller = $this->argument('Controller');
         $controllerPath = $this->requestRuleService->getControllerPath($controller);
 
-        // Validate if the controller file exists
-        if (!class_exists($controllerPath)) {
-            return $this->error("Controller class does not exist at: $controllerPath");
+        if (!$this->validateController($controllerPath)) {
+            return;
         }
 
-        $viewnames = $this->requestRuleService->getViewReturningMethods($controllerPath);
+        $viewNames = $this->requestRuleService->getViewReturningMethods($controllerPath);
         $outputs = [];
 
-        foreach ($viewnames as $action => $viewname) {
+        foreach ($viewNames as $action => $viewName) {
+            $bladeInputs = $this->requestRuleService->getBladeInputs($viewName);
 
-            $bladeInputs = $this->requestRuleService->getBladeInputs($viewname);
             foreach ($bladeInputs as $bladeInput) {
                 if ($this->hasError($bladeInput)) {
                     $this->error($bladeInput['message']);
                     continue;
                 }
 
-                $action = $bladeInput['action'] ?? $action;
-                $action = $this->removeSpecialCharacters(ucfirst(str_replace('route','',$action)));
-                $customRequestName = $this->requestRuleService->getUniqueRequestName(
-                    str_replace('Controller', '', $controller) . ucfirst($action) . 'Request'
-                );
-
+                $actionName = $this->sanitizeActionName($bladeInput['action'] ?? $action);
+                $customRequestName = $this->generateRequestName($controller, $actionName);
                 $outputs[] = $this->requestRuleService->generateCustomRequest($customRequestName);
                 $requestFilePath = app_path("Http/Requests/{$customRequestName}.php");
 
@@ -72,7 +52,7 @@ class AutogenerateRequestRule extends Command
                     $this->error("Request file does not exist at: {$requestFilePath}");
                     continue;
                 }
-                
+
                 $requestContent = File::get($requestFilePath);
                 $rulesBladeInputs = $this->requestRuleService->generateRulesCode($bladeInput);
                 $requestContent = $this->mapService->mapContentRules($requestContent, $rulesBladeInputs);
@@ -81,7 +61,7 @@ class AutogenerateRequestRule extends Command
                     $this->error($requestContent['message']);
                     continue;
                 }
-                // Save the modified content back to the file
+
                 File::put($requestFilePath, $requestContent['data']);
             }
         }
@@ -89,13 +69,34 @@ class AutogenerateRequestRule extends Command
         $this->info(implode("\n", $outputs));
     }
 
-    private function hasError(array $response): bool
+    private function validateController(string $controllerPath): bool
     {
-        return isset($response['error']) && $response['error'] == true;
+        if (!class_exists($controllerPath)) {
+            $this->error("Controller class does not exist at: $controllerPath");
+            return false;
+        }
+        return true;
     }
 
-    private function removeSpecialCharacters($string) {
-        // Use preg_replace to remove all non-alphanumeric characters
+    private function sanitizeActionName(string $action): string
+    {
+        return $this->removeSpecialCharacters(ucfirst(str_replace('route', '', $action)));
+    }
+
+    private function generateRequestName(string $controller, string $action): string
+    {
+        return $this->requestRuleService->getUniqueRequestName(
+            str_replace('Controller', '', $controller) . $action . 'Request'
+        );
+    }
+
+    private function hasError(array $response): bool
+    {
+        return !empty($response['error']);
+    }
+
+    private function removeSpecialCharacters(string $string): string
+    {
         return preg_replace('/[^a-zA-Z0-9]/', '', $string);
     }
 }
