@@ -10,6 +10,8 @@ A custom Laravel package that automatically generates request validation rules f
 - [Installation](#installation)
 - [Available Commands](#available-commands)
 - [Usage](#usage)
+- [Required Inputs in Form View](#required-inputs-in-form-view)
+- [Returning Views in Controller](#returning-views-in-controller)
 - [License](#license)
 
 ## Installation
@@ -29,6 +31,25 @@ php artisan ryanroydev:autogenerate-request-rule ControllerClass
 
 ```
 Replace ControllerClass with the name of your controller.
+
+## Required Inputs in Form View
+
+When creating your form views, Ensure that the input has a name attribute and type attribute.
+
+```php
+<input type="text" name="firstname" >
+```
+
+## Returning Views in Controller
+
+To return a view from a controller after processing a request, you can use the view() helper function. Here's an example of how to return a view:
+
+```php
+public function create()
+{
+    return view('your_view_name'); // Replace 'your_view_name' with the actual view file name
+}
+```
 
 ## Usage
 
