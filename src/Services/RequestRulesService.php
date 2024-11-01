@@ -84,19 +84,48 @@ class RequestRulesService
             ];
         }
         $bladeContent = file_get_contents($bladePath);
-        // Use regex to find input elements and extract their type and name attributes
-        preg_match_all('/<input[^>]*(?:name=["\']?([^"\'>]+)["\']?[^>]*type=["\']?([^"\'>]+)["\']?|type=["\']?([^"\'>]+)["\']?[^>]*name=["\']?([^"\'>]+)["\']?)[^>]*\/?>/i', $bladeContent, $matches);
 
-        // Combine the type and name into strings
-        $inputDetails = [];
-        foreach ($matches[1] as $index => $name) {
-            if($name != ''){
-                $type = $matches[2][$index];
-                $inputDetails[$name] = $type;
+        preg_match_all('/<form[^>]*action=["\']?([^"\'>]*)["\']?[^>]*>(.*?)<\/form>/is', $bladeContent, $formMatches);
+
+      
+        $formInputs = [];
+
+        if(empty($formMatches[0]))
+        {
+            $formInputs[] = $this->getInputsInText($bladeContent);
+           
+        } else {
+            foreach ($formMatches[0] as $index => $form) {
+
+                preg_match('/action=["\']?(\{\{\s*route\([\'"]?([^\'"\s]+)[\'"]?\s*\)\s*\}\}|[^"\'>]+)["\']?/', $form, $actionmatches);
+
+                $formContent = $formMatches[2][$index]; // Get inner form content
+              
+                $formInputs[] =  array_merge(
+                    $this->getInputsInText($formContent), 
+                    ['action' => $actionmatches[1] ?? '']
+                );
             }
         }
         // Get the content of the Blade file
-        return $inputDetails;
+        return $formInputs;
+    }
+
+    protected function getInputsInText($contents){
+        $inputs = [];
+       
+        // Now extract input fields from the form content
+        preg_match_all('/<input[^>]*(?:name=["\']?([^"\'>]+)["\']?[^>]*type=["\']?([^"\'>]+)["\']?|type=["\']?([^"\'>]+)["\']?[^>]*name=["\']?([^"\'>]+)["\']?)[^>]*\/?>/i', $contents, $inputMatches);
+            
+        // Combine input names and types into an associative array
+        foreach ($inputMatches[1] as $index => $name) {
+            if (!empty($name)) {
+                $type = $inputMatches[2][$index] ?: $inputMatches[3][$index]; // Get type from matched groups
+                $inputs[$name] = $type;
+            }
+        }
+       
+        return $inputs;
     }
 
      /**

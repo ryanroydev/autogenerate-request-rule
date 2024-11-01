@@ -36,7 +36,7 @@ class FileMappingServices
             }
 
             // Replace the old return statement and rules with the new one
-            $requestContent = substr_replace($requestContent, $newRules, $returnPosition, $methodEndPosition - $returnPosition + 1);
+            $requestContent = substr_replace($requestContent, $newRules, $returnPosition, $methodEndPosition - $returnPosition);
 
             return [
                 'error' => false,

@@ -53,33 +53,37 @@ class AutogenerateRequestRule extends Command
         foreach ($viewnames as $action => $viewname) {
 
             $bladeInputs = $this->requestRuleService->getBladeInputs($viewname);
-            if ($this->hasError($bladeInputs)) {
-                $this->error($bladeInputs['message']);
-                continue;
-            }
-           
-            $customRequestName = $this->requestRuleService->getUniqueRequestName(
-                str_replace('Controller', '', $controller) . ucfirst($action) . 'Request'
-            );
+            foreach ($bladeInputs as $bladeInput) {
+                if ($this->hasError($bladeInput)) {
+                    $this->error($bladeInput['message']);
+                    continue;
+                }
 
-            $outputs[] = $this->requestRuleService->generateCustomRequest($customRequestName);
-            $requestFilePath = app_path("Http/Requests/{$customRequestName}.php");
+                $action = $bladeInput['action'] ?? $action;
+                $action = $this->removeSpecialCharacters(ucfirst(str_replace('route','',$action)));
+                $customRequestName = $this->requestRuleService->getUniqueRequestName(
+                    str_replace('Controller', '', $controller) . ucfirst($action) . 'Request'
+                );
 
-            if (!File::exists($requestFilePath)) {
-                $this->error("Request file does not exist at: {$requestFilePath}");
-                continue;
-            }
-            
-            $requestContent = File::get($requestFilePath);
-            $rulesBladeInputs = $this->requestRuleService->generateRulesCode($bladeInputs);
-            $requestContent = $this->mapService->mapContentRules($requestContent, $rulesBladeInputs);
+                $outputs[] = $this->requestRuleService->generateCustomRequest($customRequestName);
+                $requestFilePath = app_path("Http/Requests/{$customRequestName}.php");
 
-            if ($this->hasError($requestContent)) {
-                $this->error($requestContent['message']);
-                continue;
+                if (!File::exists($requestFilePath)) {
+                    $this->error("Request file does not exist at: {$requestFilePath}");
+                    continue;
+                }
+                
+                $requestContent = File::get($requestFilePath);
+                $rulesBladeInputs = $this->requestRuleService->generateRulesCode($bladeInput);
+                $requestContent = $this->mapService->mapContentRules($requestContent, $rulesBladeInputs);
+
+                if ($this->hasError($requestContent)) {
+                    $this->error($requestContent['message']);
+                    continue;
+                }
+                // Save the modified content back to the file
+                File::put($requestFilePath, $requestContent['data']);
             }
-            // Save the modified content back to the file
-            File::put($requestFilePath, $requestContent['data']);
         }
 
         $this->info(implode("\n", $outputs));
@@ -88,5 +92,10 @@ class AutogenerateRequestRule extends Command
     private function hasError(array $response): bool
     {
         return isset($response['error']) && $response['error'] == true;
+    }
+
+    private function removeSpecialCharacters($string) {
+        // Use preg_replace to remove all non-alphanumeric characters
+        return preg_replace('/[^a-zA-Z0-9]/', '', $string);
     }
 }
