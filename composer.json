@@ -3,6 +3,10 @@
     "description": "A custom Laravel package",
     "type": "library",
     "version": "1.0.0",
+    "require": {
+        "php": "^7.3|^8.0",  
+        "illuminate/support":  "^8.0|^9.0|^10.0|^11.0"
+    },
     "autoload": {
         "psr-4": {
             "Ryanroydev\\AutogenerateRequestRule\\": "src/"
