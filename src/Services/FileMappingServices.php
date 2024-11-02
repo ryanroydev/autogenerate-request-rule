@@ -15,36 +15,40 @@ class FileMappingServices
     {
         // Define possible rules method signatures
         $rulesMethodSignatures = ['public function rules(): array', 'public function rules()'];
+        $errorMessage = '';
 
         foreach ($rulesMethodSignatures as $methodSignature) {
             $rulesMethodPosition = strpos($requestContent, $methodSignature);
-
+              
             if ($rulesMethodPosition === false) {
-                return $this->createErrorResponse("Public function rules not found in custom request.");
+                $errorMessage = "Public function rules not found in custom request.";
+                continue; // Move to the next signature
             }
-
+             
             // Find the position of the existing return statement
             $returnPosition = strpos($requestContent, 'return [', $rulesMethodPosition);
             if ($returnPosition === false) {
-                return $this->createErrorResponse("Return statement not found in the custom request.");
+                $errorMessage = "Return statement not found in the custom request.";
+                continue; // Move to the next signature
             }
-
+            
             // Find the end of the existing rules method
             $methodEndPosition = strpos($requestContent, '}', $returnPosition);
             if ($methodEndPosition === false) {
-                return $this->createErrorResponse("End of the existing rules method not found.");
+                $errorMessage = "End of the existing rules method not found.";
+                continue; // Move to the next signature
             }
 
             // Replace the old return statement and rules with the new one
             $requestContent = substr_replace($requestContent, $newRules, $returnPosition, $methodEndPosition - $returnPosition);
-
+            
             return [
                 'error' => false,
                 'data' => $requestContent,
             ];
         }
 
-        return $this->createErrorResponse("An unknown error occurred.");
+        return $this->createErrorResponse($errorMessage ?: "An unknown error occurred.");
     }
 
     /**
