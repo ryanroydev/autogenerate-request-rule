@@ -5,7 +5,7 @@ namespace Ryanroydev\AutogenerateRequestRule\Services;
 class FileMappingServices
 {
     /**
-     * Maps the content rules in the request file.
+     * Maps the content rules in the request files.
      *
      * @param string $requestContent The content of the request file.
      * @param string $newRules The new rules to be inserted.
