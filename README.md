@@ -1,6 +1,6 @@
 # Autogenerate Request Rule
 
-[![Total Downloads](https://img.shields.io/packagist/dt/ryanroydev/autogenerate-request-rule.svg?style=flat-square)]
+![Total Downloads](https://img.shields.io/packagist/dt/ryanroydev/autogenerate-request-rule.svg?style=flat-square)
 [![Latest Version](https://img.shields.io/github/release/ryanroydev/autogenerate-request-rule.svg?style=flat-square)](https://github.com/ryanroydev/autogenerate-request-rule/releases)
 [![License](https://img.shields.io/badge/license-MIT-brightgreen.svg)](LICENSE)
 
