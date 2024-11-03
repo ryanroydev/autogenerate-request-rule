@@ -117,14 +117,20 @@ class RequestRulesService
         // Now extract input fields from the form content
         preg_match_all('/<input[^>]*(?:name=["\']?([^"\'>]+)["\']?[^>]*type=["\']?([^"\'>]+)["\']?|type=["\']?([^"\'>]+)["\']?[^>]*name=["\']?([^"\'>]+)["\']?)[^>]*\/?>/i', $contents, $inputMatches);
             
-        // Combine input names and types into an associative array
-        foreach ($inputMatches[1] as $index => $name) {
-            if (!empty($name)) {
-                $type = $inputMatches[2][$index] ?: $inputMatches[3][$index]; // Get type from matched groups
+        // Loop through the matches and organize them
+        foreach ($inputMatches[0] as $key => $match) {
+            
+            $name = !empty($inputMatches[4][$key]) ? $inputMatches[4][$key] : (!empty($inputMatches[1][$key]) ? $inputMatches[1][$key] : null);
+            // Type can be in either $inputMatches[3] or $inputMatches[2]
+            $type = !empty($inputMatches[3][$key]) ? $inputMatches[3][$key] : (!empty($inputMatches[2][$key]) ? $inputMatches[2][$key] : null);
+            
+
+           
+            if ($name && $type) {
                 $inputs[$name] = $type;
             }
         }
-       
+        
         return $inputs;
     }
 
