@@ -119,11 +119,11 @@ class RequestRulesService
             
         // Loop through the matches and organize them
         foreach ($inputMatches[0] as $key => $match) {
-            // Check for name and type in matches
-            // Name can be in either $inputMatches[4] or $inputMatches[1]
-            $name = $inputMatches[4][$key] ?? $inputMatches[1][$key] ?? null;
+            
+            $name = !empty($inputMatches[4][$key]) ? $inputMatches[4][$key] : (!empty($inputMatches[1][$key]) ? $inputMatches[1][$key] : null);
             // Type can be in either $inputMatches[3] or $inputMatches[2]
-            $type = $inputMatches[3][$key] ?? $inputMatches[2][$key] ?? null;
+            $type = !empty($inputMatches[3][$key]) ? $inputMatches[3][$key] : (!empty($inputMatches[2][$key]) ? $inputMatches[2][$key] : null);
+            
 
            
             if ($name && $type) {
